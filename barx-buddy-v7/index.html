@@ -52,6 +52,21 @@
 <!-- End MaxConv Tracking Script Base Code-->
 
 
+<!-- catch epik Base Code-->
+
+<script>
+(function () {
+  var url = new URL(window.location.href);
+  // Accept either ?_epik=... (Pinterest standard) or ?epik=... if you ever pass it yourself
+  var epik = url.searchParams.get('_epik') || url.searchParams.get('epik');
+  if (epik) {
+    // Store both names; Pinterest usually reads _epik but we'll also keep epik for convenience
+    document.cookie = "_epik=" + epik + "; Path=/; Max-Age=604800; SameSite=Lax";
+    document.cookie = "epik=" + epik + "; Path=/; Max-Age=604800; SameSite=Lax";
+  }
+})();
+</script>
+	
 
 <!-- Pinterest Tag -->
 <script>
@@ -969,5 +984,6 @@ window.addEventListener('load', function(){
 <script type="text/javascript" src="./assets/pushcrew.js" async="async"></script><meta name='can_calculate_taxes' content='false'><script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"rayId":"93523accee688f12","serverTiming":{"name":{"cfExtPri":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}},"version":"2025.4.0-1-g37f21b1","token":"405b708a9b0242e88fda34dc27903686"}' crossorigin="anonymous"></script>
 </body>
 </html>
+
 
 
