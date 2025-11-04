@@ -50,7 +50,12 @@
     const drop = document.getElementById('drop-area');
     const choose = document.getElementById('chooseBtn');
 
-    choose.addEventListener('click', () => input.click());
+    choose.addEventListener('click', (e) => {
+  e.preventDefault(); // stop form-style reload
+  e.stopPropagation();
+  input.click();
+});
+
     drop.addEventListener('click', () => input.click());
     drop.addEventListener('dragover', e => { e.preventDefault(); drop.style.background = '#e0e7ff'; });
     drop.addEventListener('dragleave', () => drop.style.background = '#eef3ff');
