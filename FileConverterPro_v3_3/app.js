@@ -1,5 +1,7 @@
 import { convertImage } from './modules/imageConvert.js';
-import { applyResize, dataURLToBlob, withDefaults } from './modules/utils.js';
+// FIX: removed bad import of dataURLToBlob. We only need withDefaults (from utils) if desired.
+// For clarity, we inline a tiny withDefaults here to avoid extra coupling.
+const withDefaults = (d) => JSON.parse(JSON.stringify(d));
 
 const fileInput = document.getElementById('fileInput');
 const btnChoose = document.getElementById('btnChoose');
@@ -34,21 +36,22 @@ mode.addEventListener('change', () => {
 });
 
 // File input + dnd
-btnChoose.addEventListener('click', () => fileInput.click());
-fileInput.addEventListener('change', (e) => addJobs([...e.target.files]));
+if (btnChoose && fileInput) btnChoose.addEventListener('click', () => fileInput.click());
+if (fileInput) fileInput.addEventListener('change', (e) => addJobs([...e.target.files]));
 
-['dragenter','dragover'].forEach(evt => dropzone.addEventListener(evt, e => {
+['dragenter','dragover'].forEach(evt => dropzone && dropzone.addEventListener(evt, e => {
   e.preventDefault(); e.stopPropagation(); dropzone.style.borderColor = '#2CB1BC';
 }));
-['dragleave','drop'].forEach(evt => dropzone.addEventListener(evt, e => {
+['dragleave','drop'].forEach(evt => dropzone && dropzone.addEventListener(evt, e => {
   e.preventDefault(); e.stopPropagation(); dropzone.style.borderColor = '#cdd5d8';
 }));
-dropzone.addEventListener('drop', (e) => addJobs([...e.dataTransfer.files]));
+dropzone && dropzone.addEventListener('drop', (e) => addJobs([...e.dataTransfer.files]));
 
 // Mobile menu toggle
-hamburger.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+hamburger && hamburger.addEventListener('click', () => mobileMenu.classList.toggle('open'));
 
 function addJobs(files){
+  if (!jobs) return;
   for(const file of files){
     if(!file.type.startsWith('image/')) continue;
     const li = document.createElement('li');
