@@ -1,0 +1,314 @@
+
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>ToolConvertNow — v1.0.0</title>
+<link rel="icon" href="assets/img/logo.svg"><link rel="stylesheet" href="assets/css/style.css"></head>
+<body>
+<div class="topbar">
+  <div class="wrap nav">
+    <div class="brand"><img class="logo" src="assets/img/logo.svg"><div class="brandname">ToolConvertNow</div></div>
+    <a class="link" href="updates.html">Updates</a>
+    <span id="init-badge" class="badge">Init…</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <section class="hero"><h1>Convert & View Files</h1><p>Fast, private, in‑browser. v1.0.0 • 2025-11-05</p></section>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <nav class="menu">
+        <h3>Images</h3>
+        <a href="#jpg2png" data-section="jpg2png">JPG → PNG</a>
+        <a href="#png2jpg" data-section="png2jpg">PNG → JPG</a>
+        <a href="#webp2jpeg" data-section="webp2jpeg">WebP → JPEG</a>
+        <a href="#heic2jpg" data-section="heic2jpg">HEIC → JPG</a>
+
+        <h3>Documents & PDF</h3>
+        <a href="#jpg2word" data-section="jpg2word">JPEG → Word (OCR)</a>
+        <a href="#word2pdf" data-section="word2pdf">Word → PDF</a>
+        <a href="#word2jpg" data-section="word2jpg">Word → JPEG</a>
+        <a href="#pdf2jpg" data-section="pdf2jpg">PDF → JPG</a>
+        <a href="#pdfmerge" data-section="pdfmerge">PDF Merge</a>
+        <a href="#pdfsplit" data-section="pdfsplit">PDF Split</a>
+
+        <h3>Viewer</h3>
+        <a href="#viewer" data-section="viewer">Online Viewer</a>
+      </nav>
+    </aside>
+
+    <main>
+      <!-- JPG→PNG -->
+      <section id="jpg2png" class="section active card">
+        <h2>JPG → PNG</h2>
+        <div class="row">
+          <label class="btn" for="jpg2png-input">Choose JPG</label>
+          <input id="jpg2png-input" type="file" accept=".jpg,.jpeg,image/jpeg" multiple hidden/>
+          <input class="input" type="url" id="jpg2png-url" placeholder="Paste image URL (CORS-enabled)">
+          <button class="btn" id="jpg2png-fetch">Fetch URL</button>
+        </div>
+        <div class="drop" id="jpg2png-drop"><p>Click or drag JPG here</p></div>
+        <div class="grid-2">
+          <div class="card"><h3>How it works</h3><p>All conversions happen in your browser. No upload.</p></div>
+          <div class="card"><h3>Tips</h3><ul><li>Use PNG for transparency</li><li>For photos, JPG is smaller.</li></ul></div>
+        </div>
+        <div id="jpg2png-output"></div>
+      </section>
+
+      <!-- PNG→JPG -->
+      <section id="png2jpg" class="section card">
+        <h2>PNG → JPG</h2>
+        <div class="row">
+          <label class="btn" for="png2jpg-input">Choose PNG</label>
+          <input id="png2jpg-input" type="file" accept=".png,image/png" multiple hidden/>
+          <input class="input" type="url" id="png2jpg-url" placeholder="Paste image URL (CORS-enabled)">
+          <button class="btn" id="png2jpg-fetch">Fetch URL</button>
+        </div>
+        <div class="drop" id="png2jpg-drop"><p>Click or drag PNG here</p></div>
+        <div id="png2jpg-output"></div>
+      </section>
+
+      <!-- WebP→JPEG -->
+      <section id="webp2jpeg" class="section card">
+        <h2>WebP → JPEG</h2>
+        <div class="row">
+          <label class="btn" for="webp2jpeg-input">Choose WebP</label>
+          <input id="webp2jpeg-input" type="file" accept=".webp,image/webp" multiple hidden/>
+          <input class="input" type="url" id="webp2jpeg-url" placeholder="Paste WebP URL (CORS-enabled)">
+          <button class="btn" id="webp2jpeg-fetch">Fetch URL</button>
+        </div>
+        <div class="drop" id="webp2jpeg-drop"><p>Click or drag WebP here</p></div>
+        <div id="webp2jpeg-output"></div>
+      </section>
+
+      <!-- HEIC→JPG -->
+      <section id="heic2jpg" class="section card">
+        <h2>HEIC → JPG</h2>
+        <div class="row">
+          <label class="btn" for="heic2jpg-input">Choose HEIC</label>
+          <input id="heic2jpg-input" type="file" accept=".heic,.HEIC,image/heic,image/heif" multiple hidden/>
+          <input class="input" type="url" id="heic2jpg-url" placeholder="Paste HEIC URL (CORS-enabled)">
+          <button class="btn" id="heic2jpg-fetch">Fetch URL</button>
+        </div>
+        <div class="drop" id="heic2jpg-drop"><p>Click or drag HEIC here</p></div>
+        <div id="heic2jpg-output"></div>
+      </section>
+
+      <!-- JPEG→Word (OCR) -->
+      <section id="jpg2word" class="section card">
+        <h2>JPEG → Word (OCR)</h2>
+        <div class="row">
+          <label class="btn" for="jpg2word-input">Choose Images</label>
+          <input id="jpg2word-input" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" multiple hidden/>
+          <span class="inline-note">English OCR (Tesseract.js)</span>
+        </div>
+        <div id="jpg2word-output"></div>
+      </section>
+
+      <!-- Word→PDF -->
+      <section id="word2pdf" class="section card">
+        <h2>Word → PDF</h2>
+        <div class="row">
+          <label class="btn" for="word2pdf-input">Choose DOCX</label>
+          <input id="word2pdf-input" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden/>
+        </div>
+        <div id="word2pdf-output"></div>
+      </section>
+
+      <!-- Word→JPEG -->
+      <section id="word2jpg" class="section card">
+        <h2>Word → JPEG</h2>
+        <div class="row">
+          <label class="btn" for="word2jpg-input">Choose DOCX</label>
+          <input id="word2jpg-input" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden/>
+        </div>
+        <div id="word2jpg-output"></div>
+      </section>
+
+      <!-- PDF→JPG -->
+      <section id="pdf2jpg" class="section card">
+        <h2>PDF → JPG</h2>
+        <div class="row">
+          <label class="btn" for="pdf2jpg-input">Choose PDF</label>
+          <input id="pdf2jpg-input" type="file" accept=".pdf,application/pdf" hidden/>
+        </div>
+        <div id="pdf2jpg-output"></div>
+      </section>
+
+      <!-- PDF Merge -->
+      <section id="pdfmerge" class="section card">
+        <h2>PDF Merge</h2>
+        <div class="row">
+          <label class="btn" for="pdfmerge-input">Choose PDFs</label>
+          <input id="pdfmerge-input" type="file" accept=".pdf,application/pdf" multiple hidden/>
+        </div>
+        <div id="pdfmerge-output"></div>
+      </section>
+
+      <!-- PDF Split -->
+      <section id="pdfsplit" class="section card">
+        <h2>PDF Split</h2>
+        <div class="row">
+          <label class="btn" for="pdfsplit-input">Choose PDF</label>
+          <input id="pdfsplit-input" type="file" accept=".pdf,application/pdf" hidden/>
+        </div>
+        <div id="pdfsplit-output"></div>
+      </section>
+
+      <!-- Viewer -->
+      <section id="viewer" class="section card">
+        <h2>Online Viewer</h2>
+        <div class="row">
+          <label class="btn" for="viewer-input">Open File</label>
+          <input id="viewer-input" type="file" accept=".pdf,.docx,.jpg,.jpeg,.png,.webp,.heic" hidden/>
+        </div>
+        <div class="card">
+          <div class="grid-2">
+            <div class="preview" id="viewer-box">Preview appears here</div>
+            <div class="card">
+              <h3>Details</h3>
+              <div id="viewer-details" class="kv"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<footer>© 2025 ToolConvertNow • v1.0.0</footer>
+<div class="errbar" id="errbar"></div>
+
+<!-- Editor modal -->
+<div class="modal" id="editor-modal">
+  <div class="modal-card">
+    <button class="modal-x" id="editor-x">×</button>
+    <div class="modal-head"><h3>Quick Image Editor</h3><button class="btn" id="editor-close">Close</button></div>
+    <div class="modal-body">
+      <div class="preview"><canvas id="editor-canvas"></canvas></div>
+      <div class="control">
+        <label>Preset</label>
+        <select id="preset">
+          <option value="custom">Custom</option>
+          <option value="1200x630">Facebook Link: 1200×630</option>
+          <option value="1080x1080">Instagram Square: 1080×1080</option>
+          <option value="1080x1920">Story/Reel: 1080×1920</option>
+          <option value="1200x675">Twitter/X: 1200×675</option>
+          <option value="1000x1500">Pinterest Pin: 1000×1500</option>
+        </select>
+        <label>Width (px)</label><input type="number" id="w" min="1" value="1000">
+        <label>Height (px)</label><input type="number" id="h" min="1" value="1000">
+        <label><input type="checkbox" id="lock" checked> Keep ratio</label>
+        <label>Scale (%)</label><input type="number" id="scalePct" min="1" max="400" value="100">
+        <label>Export</label>
+        <select id="format"><option value="image/jpeg">JPEG</option><option value="image/png">PNG</option><option value="image/webp">WebP</option></select>
+        <label>Quality (JPEG/WebP)</label><input type="range" id="quality" min="0.5" max="1" step="0.01" value="0.92">
+        <div style="margin-top:10px"><a id="editor-download" class="dl-btn" href="#">Download Edited</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  function showErr(msg){var b=document.getElementById('errbar'); if(!b) return; b.textContent=msg; b.classList.add('show'); console.error(msg);}
+  function safe(fn){try{fn();}catch(e){showErr('Init error: '+(e&&e.message?e.message:e));}}
+
+  function init(){
+    var initBadge=document.getElementById('init-badge'); if(initBadge) initBadge.textContent='Init OK';
+
+    // Nav
+    var links=document.querySelectorAll('.menu a'), sections=document.querySelectorAll('.section');
+    function activate(id){ sections.forEach(s=>s.classList.remove('active')); var el=document.getElementById(id); if(el) el.classList.add('active'); links.forEach(a=>a.classList.toggle('active', a.dataset.section===id)); location.hash=id; }
+    links.forEach(a=>a.addEventListener('click',function(e){e.preventDefault(); activate(this.dataset.section);}));
+    if(location.hash && document.getElementById(location.hash.slice(1))) activate(location.hash.slice(1)); else activate('jpg2png');
+
+    // Helpers
+    function appendRow(container, blob, name){ const url=URL.createObjectURL(blob);
+      const a=document.createElement('a'); a.href=url; a.download=name; a.textContent='Download '+name; a.className='dl-btn';
+      const e=document.createElement('a'); e.href='#'; e.textContent='Edit'; e.className='edit-btn'; e.addEventListener('click',ev=>{ev.preventDefault(); openEditorFromBlob(blob,name);});
+      const p=document.createElement('p'); p.appendChild(a); p.appendChild(e); container.appendChild(p);
+    }
+    async function fetchURLtoFile(url,filename='remote-file'){ const res=await fetch(url, {mode:'cors'}); if(!res.ok) throw new Error('Fetch failed'); const ct=res.headers.get('content-type')||''; const blob=await res.blob(); return new File([blob], filename, {type:ct||'application/octet-stream'}); }
+    function dropHook(id, handler, inputId){ const box=document.getElementById(id); if(!box) return; const input=inputId?document.getElementById(inputId):null;
+      box.addEventListener('click',()=>{ if(input) input.click(); });
+      box.addEventListener('dragover',e=>{ e.preventDefault(); box.classList.add('drag'); });
+      box.addEventListener('dragleave',()=>box.classList.remove('drag'));
+      box.addEventListener('drop',e=>{ e.preventDefault(); box.classList.remove('drag'); handler(e.dataTransfer.files); });
+    }
+    function chooseHook(id, handler){ const i=document.getElementById(id); if(!i) return; i.addEventListener('change',()=>{ handler(i.files); i.value=''; }); }
+    function urlHook(inputId,btnId,handler){ const input=document.getElementById(inputId), btn=document.getElementById(btnId); if(!input||!btn) return; btn.addEventListener('click',async e=>{ e.preventDefault(); if(!input.value) return;
+      try{ const f=await fetchURLtoFile(input.value, input.value.split('/').pop().split('?')[0]||'remote'); handler([f]); }catch(err){ alert('Could not fetch URL. Make sure it is CORS-enabled.'); } }); }
+    function imageToBlob(file,type='image/png',quality=0.92){ return new Promise((resolve,reject)=>{ const img=new Image(); img.onload=()=>{ const c=document.createElement('canvas'); c.width=img.naturalWidth; c.height=img.naturalHeight; c.getContext('2d').drawImage(img,0,0); c.toBlob(b=>b?resolve(b):reject(new Error('blob failed')), type, quality); }; img.onerror=reject; img.crossOrigin='anonymous'; img.src=URL.createObjectURL(file); }); }
+
+    // Editor
+    let editorModal=document.getElementById('editor-modal'), editorCanvas=document.getElementById('editor-canvas'), editorCtx=editorCanvas.getContext('2d'),
+        preset=document.getElementById('preset'), w=document.getElementById('w'), h=document.getElementById('h'), lock=document.getElementById('lock'),
+        fmt=document.getElementById('format'), q=document.getElementById('quality'), dl=document.getElementById('editor-download'), scalePct=document.getElementById('scalePct');
+    let srcW=0, srcH=0, imgObj=null;
+    function drawResize(){ let W=parseInt(w.value||'1000',10), H=parseInt(h.value||'1000',10); if(lock.checked) H=Math.round(W*(srcH/srcW)); h.value=H; const pct=parseInt(scalePct.value||'100',10)/100; W=Math.max(1,Math.round(W*pct)); H=Math.max(1,Math.round(H*pct));
+      editorCanvas.width=W; editorCanvas.height=H; editorCtx.fillStyle='#fff'; editorCtx.fillRect(0,0,W,H);
+      const r=Math.min(W/srcW,H/srcH); const nw=Math.round(srcW*r), nh=Math.round(srcH*r); editorCtx.drawImage(imgObj, Math.floor((W-nw)/2), Math.floor((H-nh)/2), nw, nh);
+      editorCanvas.toBlob(b=>{ if(b) dl.href=URL.createObjectURL(b); }, fmt.value, parseFloat(q.value)); dl.download='edited.'+(fmt.value.split('/')[1]||'jpg');
+    }
+    function openEditorFromBlob(blob,name){ const url=URL.createObjectURL(blob); imgObj=new Image(); imgObj.onload=()=>{ srcW=imgObj.naturalWidth; srcH=imgObj.naturalHeight; drawResize(); editorModal.classList.add('show'); editorModal.style.display='flex'; }; imgObj.src=url; }
+    document.getElementById('editor-x').onclick=()=>{ editorModal.classList.remove('show'); editorModal.style.display='none'; };
+    document.getElementById('editor-close').onclick=()=>{ editorModal.classList.remove('show'); editorModal.style.display='none'; };
+    [preset,w,h,lock,fmt,q,scalePct].forEach(el=>el&&el.addEventListener('input',()=>{ if(el===preset && preset.value!=='custom'){ const a=preset.value.split('x'); w.value=parseInt(a[0],10); h.value=parseInt(a[1],10); } drawResize(); }));
+    window.openEditorFromBlob=openEditorFromBlob;
+
+    // Converters wiring
+    function handleJpg2Png(files){ const out=document.getElementById('jpg2png-output'); out.innerHTML=''; Array.from(files).forEach(async f=>{ const b=await imageToBlob(f,'image/png'); appendRow(out,b,f.name.replace(/\.(jpg|jpeg)$/i,'')+'.png'); }); }
+    chooseHook('jpg2png-input',handleJpg2Png); urlHook('jpg2png-url','jpg2png-fetch',handleJpg2Png); dropHook('jpg2png-drop',handleJpg2Png,'jpg2png-input');
+
+    function handlePng2Jpg(files){ const out=document.getElementById('png2jpg-output'); out.innerHTML=''; Array.from(files).forEach(async f=>{ const b=await imageToBlob(f,'image/jpeg',0.92); appendRow(out,b,f.name.replace(/\.png$/i,'')+'.jpg'); }); }
+    chooseHook('png2jpg-input',handlePng2Jpg); urlHook('png2jpg-url','png2jpg-fetch',handlePng2Jpg); dropHook('png2jpg-drop',handlePng2Jpg,'png2jpg-input');
+
+    function handleWebp2Jpeg(files){ const out=document.getElementById('webp2jpeg-output'); out.innerHTML=''; Array.from(files).forEach(async f=>{ const b=await imageToBlob(f,'image/jpeg',0.92); appendRow(out,b,f.name.replace(/\.webp$/i,'')+'.jpg'); }); }
+    chooseHook('webp2jpeg-input',handleWebp2Jpeg); urlHook('webp2jpeg-url','webp2jpeg-fetch',handleWebp2Jpeg); dropHook('webp2jpeg-drop',handleWebp2Jpeg,'webp2jpeg-input');
+
+    async function ensure(src,name){ if(window[name]) return; await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); }
+    async function heicFast(file){ await ensure('https://cdn.jsdelivr.net/npm/heic2any@0.0.3/dist/heic2any.min.js','heic2any'); const r=await heic2any({blob:file,toType:'image/jpeg',quality:0.92}); return Array.isArray(r)?r[0]:r; }
+    async function heicFallback(file){ await ensure('https://cdn.jsdelivr.net/npm/libheif-js@1.14.0/dist/libheif.js','libheif'); const buf=await file.arrayBuffer(); const heif=new libheif.HeifDecoder(); const images=heif.decode(buf); const rgba=images[0].display(); const c=document.createElement('canvas'); c.width=rgba.width; c.height=rgba.height; const ctx=c.getContext('2d'); const id=new ImageData(rgba.data,rgba.width,rgba.height); ctx.putImageData(id,0,0); return await new Promise(r=>c.toBlob(b=>r(b),'image/jpeg',0.92)); }
+    function handleHeic2Jpg(files){ const out=document.getElementById('heic2jpg-output'); out.innerHTML=''; Array.from(files).forEach(async f=>{ let b; try{ b=await heicFast(f); }catch(e){ b=await heicFallback(f); } appendRow(out,b,f.name.replace(/\.(heic|HEIC)$/,'')+'.jpg'); }); }
+    chooseHook('heic2jpg-input',handleHeic2Jpg); urlHook('heic2jpg-url','heic2jpg-fetch',handleHeic2Jpg); dropHook('heic2jpg-drop',handleHeic2Jpg,'heic2jpg-input');
+
+    async function ensureLib(src,name){ if(window[name]) return; await new Promise((r,j)=>{ const s=document.createElement('script'); s.src=src; s.onload=r; s.onerror=j; document.head.appendChild(s); }); }
+    async function ocrToDocx(files,out){ await ensureLib('https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js','Tesseract'); await ensureLib('https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js','docx'); const paras=[]; for(const f of files){ const res=await Tesseract.recognize(f,'eng'); paras.push((res.data.text||'').trim()||'[No text]'); } const doc=new docx.Document({sections:[{children:paras.map(t=>new docx.Paragraph(t))}]}); const blob=await docx.Packer.toBlob(doc); appendRow(out,blob,'ocr-result.docx'); }
+    document.getElementById('jpg2word-input').addEventListener('change',()=>{ const out=document.getElementById('jpg2word-output'); out.innerHTML=''; ocrToDocx(document.getElementById('jpg2word-input').files,out); });
+
+    async function docxToJpeg(file,out){ await ensureLib('https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js','mammoth'); await ensureLib('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js','html2canvas'); const buf=await file.arrayBuffer(); const r=await mammoth.convertToHtml({arrayBuffer:buf}); const dv=document.createElement('div'); dv.style.background='#fff'; dv.style.padding='20px'; dv.innerHTML=r.value; out.appendChild(dv); const cvs=await html2canvas(dv,{backgroundColor:'#fff',scale:2}); cvs.toBlob(b=>appendRow(out,b,file.name.replace(/\.docx$/i,'')+'.jpg'),'image/jpeg',0.92); }
+    document.getElementById('word2jpg-input').addEventListener('change',()=>{ const out=document.getElementById('word2jpg-output'); out.innerHTML=''; const f=document.getElementById('word2jpg-input').files[0]; if(f) docxToJpeg(f,out); });
+
+    async function docxToPdf(file,out){ await ensureLib('https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js','mammoth'); await ensureLib('https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js','html2pdf'); const buf=await file.arrayBuffer(); const r=await mammoth.convertToHtml({arrayBuffer:buf}); const dv=document.createElement('div'); dv.style.background='#fff'; dv.style.padding='20px'; dv.innerHTML=r.value; out.appendChild(dv); const opt={margin:10,filename:file.name.replace(/\.docx$/i,'')+'.pdf',image:{type:'jpeg',quality:0.95},html2canvas:{scale:2},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}; const worker=html2pdf().from(dv).set(opt); const pdfBlob=await worker.outputPdf('blob'); appendRow(out,pdfBlob,opt.filename); }
+    document.getElementById('word2pdf-input').addEventListener('change',()=>{ const out=document.getElementById('word2pdf-output'); out.innerHTML=''; const f=document.getElementById('word2pdf-input').files[0]; if(f) docxToPdf(f,out); });
+
+    async function pdfToJpg(file,out){ await ensureLib('https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js','pdfjsLib'); pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js'; const buf=await file.arrayBuffer(); const pdf=await pdfjsLib.getDocument({data:buf}).promise; for(let p=1;p<=pdf.numPages;p++){ const page=await pdf.getPage(p); const vp=page.getViewport({scale:2}); const c=document.createElement('canvas'); c.width=vp.width; c.height=vp.height; await page.render({canvasContext=c.getContext('2d'),viewport:vp}).promise; await new Promise(res=>c.toBlob(b=>{ appendRow(out,b,file.name.replace(/\.pdf$/i,'')+`-page-${p}.jpg`); res(); },'image/jpeg',0.92)); } }
+    document.getElementById('pdf2jpg-input').addEventListener('change',()=>{ const out=document.getElementById('pdf2jpg-output'); out.innerHTML=''; const f=document.getElementById('pdf2jpg-input').files[0]; if(f) pdfToJpg(f,out); });
+
+    async function ensurePdfLib(){ await ensureLib('https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js','PDFLib'); }
+    document.getElementById('pdfmerge-input').addEventListener('change',async()=>{ const out=document.getElementById('pdfmerge-output'); out.innerHTML=''; await ensurePdfLib(); const PDFDocument=PDFLib.PDFDocument; const merged=await PDFDocument.create(); const files=[...document.getElementById('pdfmerge-input').files]; for(const f of files){ const bytes=await f.arrayBuffer(); const src=await PDFDocument.load(bytes); const pages=await merged.copyPages(src,src.getPageIndices()); pages.forEach(p=>merged.addPage(p)); } const outBytes=await merged.save(); appendRow(out,new Blob([outBytes],{type:'application/pdf'}),'merged.pdf'); });
+    document.getElementById('pdfsplit-input').addEventListener('change',async()=>{ const out=document.getElementById('pdfsplit-output'); out.innerHTML=''; await ensurePdfLib(); const file=document.getElementById('pdfsplit-input').files[0]; if(!file) return; const pdf=await PDFLib.PDFDocument.load(await file.arrayBuffer()); for(let i=0;i<pdf.getPageCount();i++){ const n=await PDFLib.PDFDocument.create(); const pg=(await n.copyPages(pdf,[i]))[0]; n.addPage(pg); const b=await n.save(); appendRow(out,new Blob([b],{type:'application/pdf'}),file.name.replace(/\.pdf$/i,'')+`-page-${i+1}.pdf`); } });
+
+    // Viewer
+    const viewerInput=document.getElementById('viewer-input');
+    if(viewerInput) viewerInput.addEventListener('change',()=>{ if(viewerInput.files.length) viewFile(viewerInput.files[0]); });
+    async function viewFile(file){ const box=document.getElementById('viewer-box'); const kv=document.getElementById('viewer-details'); box.innerHTML=''; kv.innerHTML='';
+      const nm=file.name.toLowerCase();
+      kv.innerHTML += '<div><b>File</b></div><div>'+file.name+'</div>';
+      kv.innerHTML += '<div><b>Type</b></div><div>'+(file.type||'(unknown)')+'</div>';
+      kv.innerHTML += '<div><b>Size</b></div><div>'+file.size+' B</div>';
+      if(nm.endsWith('.pdf')){ await ensureLib('https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js','pdfjsLib'); pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js'; const buf=await file.arrayBuffer(); const pdf=await pdfjsLib.getDocument({data:buf}).promise; kv.innerHTML += '<div><b>Pages</b></div><div>'+pdf.numPages+'</div>'; const page=await pdf.getPage(1); const vp=page.getViewport({scale:1.2}); const c=document.createElement('canvas'); c.width=vp.width; c.height=vp.height; await page.render({canvasContext=c.getContext('2d'),viewport:vp}).promise; box.appendChild(c); return; }
+      const url=URL.createObjectURL(file); const img=new Image(); img.onload=()=>{ box.appendChild(img); img.style.maxWidth='100%'; }; img.src=url;
+    }
+  }
+
+  // triple-run bootstrap
+  safe(init);
+  document.addEventListener('DOMContentLoaded', ()=>safe(init), {once:true});
+  window.addEventListener('load', ()=>safe(init), {once:true});
+  window.addEventListener('error', e=>showErr('JS error: '+(e.message||'unknown')+' @ '+(e.filename||'')+':'+(e.lineno||'')));
+})();
+</script>
+</body></html>
