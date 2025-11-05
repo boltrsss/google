@@ -1,2 +1,0 @@
-ToolConvertNow 1.0.0-lite — 2025-11-05
-Lite retry build (minimal files).
