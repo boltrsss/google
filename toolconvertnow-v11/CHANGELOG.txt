@@ -1,5 +1,0 @@
-ToolConvertNow v1.0.0 — 2025-11-05
-- Full converters + viewer
-- UI polish, mobile tabs, URL fetch
-- Editor presets, ratio lock, scale
-- Triple init + error surfacing
