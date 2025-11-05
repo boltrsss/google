@@ -1,0 +1,2 @@
+ToolConvertNow 1.0.1-lite — 2025-11-05
+- Full functional index with CDN libs.
