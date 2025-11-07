@@ -1,0 +1,73 @@
+<!doctype html><html><head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>FileConverterPro – Classic Crop (Zoom)</title>
+<link rel="stylesheet" href="style.classic.css"/>
+</head><body>
+<header class="bar"><div class="brand">FileConverterPro</div></header>
+<main class="container">
+  <div id="dropArea" class="drop">
+    <div id="chooseBtn" class="btn primary">+ Choose Files</div>
+    <input id="fileInput" type="file" accept="image/*" multiple style="display:none"/>
+    <p class="note">Drag & drop images here.</p>
+  </div>
+  <div id="fileList" class="list"></div>
+</main>
+
+<div id="modal" class="modal" tabindex="0" aria-modal="true" role="dialog">
+  <div class="panel">
+    <div class="panel-top">
+      <div class="left">
+        <label>Crop</label>
+        <select id="aspectSel">
+          <option value="free">Free</option>
+          <option value="1:1">1:1 (Square)</option>
+          <option value="3:4">3:4</option>
+          <option value="4:3">4:3</option>
+          <option value="16:9">16:9</option>
+          <option value="9:16">9:16</option>
+        </select>
+      </div>
+      <div class="right">
+        <div class="zoombar">
+          <button id="zoomOut" class="btn">−</button>
+          <span id="zoomLabel" class="zoomlbl">100%</span>
+          <button id="zoomIn" class="btn">+</button>
+          <button id="zoomFit" class="btn">Fit</button>
+          <button id="zoom100" class="btn">100%</button>
+        </div>
+        <button id="resetCrop" class="btn">Reset</button>
+        <button id="applyCrop" class="btn primary">Apply Crop</button>
+        <button id="closeModal" class="btn">Close</button>
+      </div>
+    </div>
+    <div class="content">
+      <div class="stage scroller">
+        <div class="canvasWrap">
+          <canvas id="srcCanvas"></canvas>
+          <div id="selection" class="sel" style="display:none">
+            <div class="h nw" data-h="nw"></div>
+            <div class="h n" data-h="n"></div>
+            <div class="h ne" data-h="ne"></div>
+            <div class="h e" data-h="e"></div>
+            <div class="h se" data-h="se"></div>
+            <div class="h s" data-h="s"></div>
+            <div class="h sw" data-h="sw"></div>
+            <div class="h w" data-h="w"></div>
+          </div>
+        </div>
+      </div>
+      <aside class="side">
+        <div class="pvwrap">
+          <canvas id="pv" width="220" height="220"></canvas>
+          <div class="pvsize" id="pvSize">—</div>
+        </div>
+        <p class="help">Keyboard: arrows=1px, Shift+arrows=10px, Esc/Delete=clear. Zoom: Ctrl + Mousewheel.</p>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+<script src="classic.core.v2.zoom.js"></script>
+</body></html>
