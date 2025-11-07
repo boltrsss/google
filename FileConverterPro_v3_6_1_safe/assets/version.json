@@ -1,0 +1,6 @@
+{
+  "name": "FileConverterPro",
+  "version": "3.6.1",
+  "channel": "safe",
+  "build": "ui-patch"
+}
