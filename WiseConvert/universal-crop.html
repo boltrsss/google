@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Universal Crop Tool (Beta) - WiseConvert</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Crop any image to popular aspect ratios like 1:1, 4:5, 9:16 and more by dragging to adjust the position.">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="top-bar">
+    <div class="logo"><a href="index.html" style="text-decoration:none;color:#f9fafb;">WiseConvert</a></div>
+    <nav class="top-nav">
+      <a href="jpg-to-png.html">JPG→PNG</a>
+      <a href="png-to-jpg.html">PNG→JPG</a>
+      <a href="webp-to-jpg.html">WEBP</a>
+      <a href="jpg-to-webp.html">JPG→WEBP</a>
+      <a href="resize-image.html">Resize</a>
+      <a href="compress-image.html">Compress</a>
+      <a href="social-presets.html">Social</a>
+      <a href="universal-convert.html">All-in-One</a>
+      <a href="universal-crop.html">Crop</a>
+      <a href="batch-convert.html">Batch</a>
+      <a href="pdf-tools.html">PDF</a>
+      <a href="qr-generator.html">QR</a>
+      <a href="heic-avif.html">HEIC/AVIF</a>
+      <a href="history.html">History</a>
+    </nav>
+    <div class="theme-toggle">
+      <button id="theme-toggle-btn" aria-label="Toggle dark mode">🌙</button>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="container">
+      <section class="tool-panel">
+        <h1>Universal Crop Tool (Beta)</h1>
+        <p>Upload an image, choose an aspect ratio, drag to adjust the crop, then download.</p>
+        <div class="tool-box">
+          <div class="upload-area" data-accept="image/*">
+            <p><strong>Click to choose</strong> or drag &amp; drop an image here.</p>
+            <input type="file" class="file-input" accept="image/*">
+          </div>
+
+          <div class="tool-controls">
+            <label>Aspect ratio:</label>
+            <select id="ratio-select">
+              <option value="1:1">1 : 1 (Square)</option>
+              <option value="4:5">4 : 5 (Portrait)</option>
+              <option value="9:16">9 : 16 (Vertical)</option>
+              <option value="3:2">3 : 2</option>
+              <option value="2:3">2 : 3</option>
+              <option value="4:3">4 : 3</option>
+              <option value="3:4">3 : 4</option>
+            </select>
+            <button class="btn-primary" id="btn-preview">Preview &amp; Adjust</button>
+            <button class="btn-primary" id="btn-download">Download Cropped</button>
+          </div>
+
+          <div class="crop-preview-wrapper">
+            <canvas id="crop-preview" width="360" height="360"></canvas>
+            <div class="crop-hint">Drag on the image to adjust the crop. Aspect ratio is locked.</div>
+          </div>
+
+          <div class="result-area"></div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <p>© <span id="year"></span> WiseConvert. All rights reserved.</p>
+      </footer>
+    </div>
+  </main>
+
+  <script src="/js/tool-common.js"></script>
+  <script src="/js/dark-mode.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var year = document.getElementById('year');
+    if (year) year.textContent = new Date().getFullYear();
+
+    var btnPreview = document.getElementById('btn-preview');
+    var btnDownload = document.getElementById('btn-download');
+    var ratioSelect = document.getElementById('ratio-select');
+    var canvas = document.getElementById('crop-preview');
+    var ctx = canvas.getContext('2d');
+
+    var crop = null;
+
+    function setupCrop() {
+      var state = window.currentToolState;
+      if (!state || !state.image) {
+        alert('Please upload an image first.');
+        return;
+      }
+      var ratioParts = ratioSelect.value.split(':');
+      var rw = parseInt(ratioParts[0], 10) || 1;
+      var rh = parseInt(ratioParts[1], 10) || 1;
+      var targetW = 1080;
+      var targetH = Math.round(targetW * rh / rw);
+
+      var maxSide = 360;
+      var viewScale = Math.min(maxSide / targetW, maxSide / targetH);
+      var viewW = Math.round(targetW * viewScale);
+      var viewH = Math.round(targetH * viewScale);
+      canvas.width = viewW;
+      canvas.height = viewH;
+
+      var img = state.image;
+      var scale = Math.max(targetW / img.width, targetH / img.height);
+      var imgDrawW = img.width * scale;
+      var imgDrawH = img.height * scale;
+      var offsetX = (targetW - imgDrawW) / 2;
+      var offsetY = (targetH - imgDrawH) / 2;
+
+      crop = {
+        targetW: targetW,
+        targetH: targetH,
+        viewScale: viewScale,
+        scale: scale,
+        offsetX: offsetX,
+        offsetY: offsetY,
+        imgDrawW: imgDrawW,
+        imgDrawH: imgDrawH,
+        dragging: false,
+        startX: 0,
+        startY: 0,
+        startOffsetX: 0,
+        startOffsetY: 0,
+        img: img
+      };
+
+      clampOffsets();
+      render();
+    }
+
+    function clampOffsets() {
+      if (!crop) return;
+      if (crop.offsetX > 0) crop.offsetX = 0;
+      if (crop.offsetY > 0) crop.offsetY = 0;
+      if (crop.offsetX + crop.imgDrawW < crop.targetW) {
+        crop.offsetX = crop.targetW - crop.imgDrawW;
+      }
+      if (crop.offsetY + crop.imgDrawH < crop.targetH) {
+        crop.offsetY = crop.targetH - crop.imgDrawH;
+      }
+    }
+
+    function render() {
+      if (!crop) return;
+      var vs = crop.viewScale;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.save();
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(
+        crop.img,
+        crop.offsetX * vs,
+        crop.offsetY * vs,
+        crop.imgDrawW * vs,
+        crop.imgDrawH * vs
+      );
+      ctx.restore();
+    }
+
+    function getPointerPos(evt) {
+      var rect = canvas.getBoundingClientRect();
+      var clientX, clientY;
+      if (evt.touches && evt.touches[0]) {
+        clientX = evt.touches[0].clientX;
+        clientY = evt.touches[0].clientY;
+      } else {
+        clientX = evt.clientX;
+        clientY = evt.clientY;
+      }
+      return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      };
+    }
+
+    function startDrag(evt) {
+      if (!crop) return;
+      evt.preventDefault();
+      var pos = getPointerPos(evt);
+      crop.dragging = true;
+      crop.startX = pos.x;
+      crop.startY = pos.y;
+      crop.startOffsetX = crop.offsetX;
+      crop.startOffsetY = crop.offsetY;
+    }
+
+    function moveDrag(evt) {
+      if (!crop || !crop.dragging) return;
+      evt.preventDefault();
+      var pos = getPointerPos(evt);
+      var dx = (pos.x - crop.startX) / crop.viewScale;
+      var dy = (pos.y - crop.startY) / crop.viewScale;
+      crop.offsetX = crop.startOffsetX + dx;
+      crop.offsetY = crop.startOffsetY + dy;
+      clampOffsets();
+      render();
+    }
+
+    function endDrag() {
+      if (!crop) return;
+      crop.dragging = false;
+    }
+
+    canvas.addEventListener('mousedown', startDrag);
+    canvas.addEventListener('touchstart', startDrag, { passive: false });
+    window.addEventListener('mousemove', moveDrag);
+    window.addEventListener('touchmove', moveDrag, { passive: false });
+    window.addEventListener('mouseup', endDrag);
+    window.addEventListener('mouseleave', endDrag);
+    window.addEventListener('touchend', endDrag);
+    window.addEventListener('touchcancel', endDrag);
+
+    btnPreview.addEventListener('click', setupCrop);
+
+    btnDownload.addEventListener('click', function() {
+      var state = window.currentToolState;
+      if (!state || !state.image) {
+        alert('Please upload an image first.');
+        return;
+      }
+      if (!crop) {
+        alert('Please click "Preview & Adjust" first.');
+        return;
+      }
+      clampOffsets();
+      var out = document.createElement('canvas');
+      out.width = crop.targetW;
+      out.height = crop.targetH;
+      var octx = out.getContext('2d');
+      octx.fillStyle = '#000000';
+      octx.fillRect(0, 0, out.width, out.height);
+      octx.drawImage(
+        crop.img,
+        crop.offsetX,
+        crop.offsetY,
+        crop.imgDrawW,
+        crop.imgDrawH
+      );
+      var dataUrl = out.toDataURL('image/jpeg', 0.9);
+      setResult('Cropped with aspect ' + ratioSelect.value + ' (input: ' + state.format + ').', dataUrl, 'crop-' + ratioSelect.value.replace(':','-') + '.jpg');
+    });
+  });
+  </script>
+</body>
+</html>

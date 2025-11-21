@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Batch Convert (Beta) - WiseConvert</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Convert multiple images at once to JPG, PNG or WEBP.">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="top-bar">
+    <div class="logo"><a href="index.html" style="text-decoration:none;color:#f9fafb;">WiseConvert</a></div>
+    <nav class="top-nav">
+      <a href="jpg-to-png.html">JPG→PNG</a>
+      <a href="png-to-jpg.html">PNG→JPG</a>
+      <a href="webp-to-jpg.html">WEBP</a>
+      <a href="jpg-to-webp.html">JPG→WEBP</a>
+      <a href="resize-image.html">Resize</a>
+      <a href="compress-image.html">Compress</a>
+      <a href="social-presets.html">Social</a>
+      <a href="universal-convert.html">All-in-One</a>
+      <a href="universal-crop.html">Crop</a>
+      <a href="batch-convert.html">Batch</a>
+      <a href="pdf-tools.html">PDF</a>
+      <a href="qr-generator.html">QR</a>
+      <a href="heic-avif.html">HEIC/AVIF</a>
+      <a href="history.html">History</a>
+    </nav>
+    <div class="theme-toggle">
+      <button id="theme-toggle-btn" aria-label="Toggle dark mode">🌙</button>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="container">
+      <section class="tool-panel">
+        <h1>Batch Convert (Beta)</h1>
+        <p>Drag in multiple images and convert them all to JPG, PNG or WEBP. Download each file after conversion. (ZIP download will be added later.)</p>
+        <div class="tool-box">
+          <div id="batch-drop" class="upload-area">
+            <p><strong>Click to choose</strong> or drag &amp; drop multiple images here.</p>
+            <input type="file" id="batch-input" class="file-input" accept="image/*" multiple>
+          </div>
+
+          <div class="tool-controls">
+            <label>Output format:</label>
+            <select id="batch-format">
+              <option value="image/jpeg" data-ext="jpg">JPG</option>
+              <option value="image/png" data-ext="png">PNG</option>
+              <option value="image/webp" data-ext="webp">WEBP</option>
+            </select>
+            <button class="btn-primary" id="btn-batch">Convert All</button>
+          </div>
+
+          <div id="batch-status" class="result-area"></div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <p>© <span id="year"></span> WiseConvert. All rights reserved.</p>
+      </footer>
+    </div>
+  </main>
+
+  <script src="/js/dark-mode.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var year = document.getElementById('year');
+    if (year) year.textContent = new Date().getFullYear();
+
+    var drop = document.getElementById('batch-drop');
+    var input = document.getElementById('batch-input');
+    var btn = document.getElementById('btn-batch');
+    var formatSel = document.getElementById('batch-format');
+    var status = document.getElementById('batch-status');
+    var files = [];
+
+    function handleFiles(fileList) {
+      files = Array.from(fileList || []).filter(function(f) {
+        return f.type && f.type.startsWith('image/');
+      });
+      if (files.length === 0) {
+        status.innerHTML = '<p>No image files detected.</p>';
+      } else {
+        status.innerHTML = '<p>Ready to convert <strong>' + files.length + '</strong> files.</p>';
+      }
+    }
+
+    drop.addEventListener('click', function() { input.click(); });
+
+    drop.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      drop.classList.add('dragover');
+    });
+    drop.addEventListener('dragleave', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      drop.classList.remove('dragover');
+    });
+    drop.addEventListener('drop', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      drop.classList.remove('dragover');
+      handleFiles(e.dataTransfer.files);
+    });
+
+    input.addEventListener('change', function(e) {
+      handleFiles(e.target.files);
+    });
+
+    btn.addEventListener('click', function() {
+      if (!files || files.length === 0) {
+        alert('Please add some images first.');
+        return;
+      }
+      var mime = formatSel.value;
+      var ext = formatSel.options[formatSel.selectedIndex].getAttribute('data-ext') || 'jpg';
+      status.innerHTML = '<p>Converting ' + files.length + ' files...</p>';
+
+      var outHtml = '';
+      var processed = 0;
+
+      files.forEach(function(file, idx) {
+        var reader = new FileReader();
+        reader.onload = function(ev) {
+          var img = new Image();
+          img.onload = function() {
+            var canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            var dataUrl;
+            try {
+              dataUrl = canvas.toDataURL(mime);
+            } catch (err) {
+              dataUrl = null;
+            }
+            processed++;
+            if (dataUrl) {
+              var safeName = (file.name || 'image').replace(/\.[^.]+$/, '');
+              var filename = safeName + '-batch.' + ext;
+              outHtml += '<div style="margin-bottom:8px;font-size:13px;">';
+              outHtml += filename + ' - <a href="' + dataUrl + '" download="' + filename + '" class="download-link" style="padding:4px 10px;font-size:12px;">Download</a>';
+              outHtml += '</div>';
+            } else {
+              outHtml += '<div style="margin-bottom:8px;font-size:13px;color:#b91c1c;">Failed to convert ' + (file.name || 'file') + '</div>';
+            }
+            if (processed === files.length) {
+              status.innerHTML = '<p>Finished converting ' + files.length + ' file(s):</p>' + outHtml;
+            }
+          };
+          img.onerror = function() {
+            processed++;
+            outHtml += '<div style="margin-bottom:8px;font-size:13px;color:#b91c1c;">Failed to read ' + (file.name || 'file') + '</div>';
+            if (processed === files.length) {
+              status.innerHTML = '<p>Finished converting ' + files.length + ' file(s):</p>' + outHtml;
+            }
+          };
+          img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+  });
+  </script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>QR Code Generator (Beta Preview) - WiseConvert</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Preview of QR code generator tool. Final scannable version coming in a later beta.">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="top-bar">
+    <div class="logo"><a href="index.html" style="text-decoration:none;color:#f9fafb;">WiseConvert</a></div>
+    <nav class="top-nav">
+      <a href="jpg-to-png.html">JPG→PNG</a>
+      <a href="png-to-jpg.html">PNG→JPG</a>
+      <a href="webp-to-jpg.html">WEBP</a>
+      <a href="jpg-to-webp.html">JPG→WEBP</a>
+      <a href="resize-image.html">Resize</a>
+      <a href="compress-image.html">Compress</a>
+      <a href="social-presets.html">Social</a>
+      <a href="universal-convert.html">All-in-One</a>
+      <a href="universal-crop.html">Crop</a>
+      <a href="batch-convert.html">Batch</a>
+      <a href="pdf-tools.html">PDF</a>
+      <a href="qr-generator.html">QR</a>
+      <a href="heic-avif.html">HEIC/AVIF</a>
+      <a href="history.html">History</a>
+    </nav>
+    <div class="theme-toggle">
+      <button id="theme-toggle-btn" aria-label="Toggle dark mode">🌙</button>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="container">
+      <section class="tool-panel">
+        <h1>QR Code Generator (Beta Preview)</h1>
+        <p>This is a visual preview page for the future QR generator. In this beta, the QR pattern is decorative only and not guaranteed to be scannable. A fully scannable QR engine will be added in a later version.</p>
+        <div class="tool-box">
+          <label>Text / URL</label>
+          <input type="text" id="qr-text" placeholder="Enter text or URL" style="width:100%;padding:8px 10px;border-radius:10px;border:1px solid #d1d5db;font-size:14px;margin-bottom:12px;">
+          <div class="crop-preview-wrapper">
+            <canvas id="qr-canvas" width="240" height="240"></canvas>
+            <div class="crop-hint">Preview only in this beta. Not scannable yet.</div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <p>© <span id="year"></span> WiseConvert. All rights reserved.</p>
+      </footer>
+    </div>
+  </main>
+
+  <script src="/js/dark-mode.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var year = document.getElementById('year');
+    if (year) year.textContent = new Date().getFullYear();
+
+    var canvas = document.getElementById('qr-canvas');
+    var ctx = canvas.getContext('2d');
+    var input = document.getElementById('qr-text');
+
+    function drawPlaceholder(text) {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#000000';
+
+      var hash = 0;
+      for (var i = 0; i < text.length; i++) {
+        hash = (hash * 31 + text.charCodeAt(i)) & 0xffffffff;
+      }
+      var cells = 21;
+      var cellSize = Math.floor(canvas.width / cells);
+      for (var y = 0; y < cells; y++) {
+        for (var x = 0; x < cells; x++) {
+          var bit = (hash >> ((x + y * cells) % 31)) & 1;
+          if (bit) {
+            ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+          }
+        }
+      }
+    }
+
+    drawPlaceholder('WiseConvert QR');
+
+    input.addEventListener('input', function() {
+      drawPlaceholder(input.value || 'WiseConvert QR');
+    });
+  });
+  </script>
+</body>
+</html>

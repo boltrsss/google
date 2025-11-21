@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HEIC & AVIF Converter (Beta) - WiseConvert</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Convert HEIC and AVIF images to JPG or PNG directly in your browser (where supported).">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="top-bar">
+    <div class="logo"><a href="index.html" style="text-decoration:none;color:#f9fafb;">WiseConvert</a></div>
+    <nav class="top-nav">
+      <a href="jpg-to-png.html">JPG→PNG</a>
+      <a href="png-to-jpg.html">PNG→JPG</a>
+      <a href="webp-to-jpg.html">WEBP</a>
+      <a href="jpg-to-webp.html">JPG→WEBP</a>
+      <a href="resize-image.html">Resize</a>
+      <a href="compress-image.html">Compress</a>
+      <a href="social-presets.html">Social</a>
+      <a href="universal-convert.html">All-in-One</a>
+      <a href="universal-crop.html">Crop</a>
+      <a href="batch-convert.html">Batch</a>
+      <a href="pdf-tools.html">PDF</a>
+      <a href="qr-generator.html">QR</a>
+      <a href="heic-avif.html">HEIC/AVIF</a>
+      <a href="history.html">History</a>
+    </nav>
+    <div class="theme-toggle">
+      <button id="theme-toggle-btn" aria-label="Toggle dark mode">🌙</button>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="container">
+      <section class="tool-panel">
+        <h1>HEIC &amp; AVIF Converter (Beta)</h1>
+        <p>Convert HEIC and AVIF images to JPG or PNG directly in your browser. Support depends on your browser (Safari usually supports HEIC, Chrome supports AVIF).</p>
+        <div class="tool-box">
+          <div class="upload-area" id="heic-drop">
+            <p><strong>Click to choose</strong> or drag &amp; drop HEIC/AVIF images here.</p>
+            <input type="file" id="heic-input" class="file-input" accept=".heic,.heif,image/heic,image/heif,.avif,image/avif">
+          </div>
+
+          <div class="tool-controls">
+            <label>Output format:</label>
+            <select id="heic-format">
+              <option value="image/jpeg" data-ext="jpg">JPG</option>
+              <option value="image/png" data-ext="png">PNG</option>
+            </select>
+            <button class="btn-primary" id="btn-heic">Convert</button>
+          </div>
+
+          <div id="heic-result" class="result-area"></div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <p>© <span id="year"></span> WiseConvert. All rights reserved.</p>
+      </footer>
+    </div>
+  </main>
+
+  <script src="/js/dark-mode.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var year = document.getElementById('year');
+    if (year) year.textContent = new Date().getFullYear();
+
+    var drop = document.getElementById('heic-drop');
+    var input = document.getElementById('heic-input');
+    var btn = document.getElementById('btn-heic');
+    var fmt = document.getElementById('heic-format');
+    var result = document.getElementById('heic-result');
+    var currentFile = null;
+
+    drop.addEventListener('click', function() { input.click(); });
+
+    function handleFile(file) {
+      currentFile = file;
+      if (!file) {
+        result.innerHTML = '<p>No file selected.</p>';
+        return;
+      }
+      result.innerHTML = '<p>Selected file: <strong>' + (file.name || '') + '</strong> (' + (file.type || 'unknown type') + ')</p>';
+    }
+
+    drop.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      drop.classList.add('dragover');
+    });
+    drop.addEventListener('dragleave', function(e) {
+      e.preventDefault();
+      drop.classList.remove('dragover');
+    });
+    drop.addEventListener('drop', function(e) {
+      e.preventDefault();
+      drop.classList.remove('dragover');
+      handleFile(e.dataTransfer.files[0]);
+    });
+
+    input.addEventListener('change', function(e) {
+      handleFile(e.target.files[0]);
+    });
+
+    btn.addEventListener('click', function() {
+      if (!currentFile) {
+        alert('Please choose a HEIC or AVIF file first.');
+        return;
+      }
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        var img = new Image();
+        img.onload = function() {
+          var mime = fmt.value;
+          var ext = fmt.options[fmt.selectedIndex].getAttribute('data-ext') || 'jpg';
+          var canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          var ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          var dataUrl;
+          try {
+            dataUrl = canvas.toDataURL(mime);
+          } catch (err) {
+            result.innerHTML = '<p>Conversion failed in this browser.</p>';
+            return;
+          }
+          var safeName = (currentFile.name || 'image').replace(/\.[^.]+$/, '');
+          var filename = safeName + '-converted.' + ext;
+          result.innerHTML = '<p>Converted <strong>' + (currentFile.name || '') + '</strong> to ' + ext.toUpperCase() + '.</p>' +
+            '<div class="result-preview"><img src="' + dataUrl + '" style="max-width:100%;border-radius:12px;border:1px solid #e5e7eb;"></div>' +
+            '<a href="' + dataUrl + '" download="' + filename + '" class="download-link" style="margin-top:8px;display:inline-block;">Download ' + filename + '</a>';
+        };
+        img.onerror = function() {
+          result.innerHTML = '<p>Your browser cannot decode this HEIC/AVIF file. Try Safari (for HEIC) or Chrome (for AVIF).</p>';
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(currentFile);
+    });
+  });
+  </script>
+</body>
+</html>

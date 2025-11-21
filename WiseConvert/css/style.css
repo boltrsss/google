@@ -1,0 +1,68 @@
+body{font-family:Arial,sans-serif;background:#f3f4f6;margin:0;padding:20px;}
+/* Dark mode + header tweaks for v6-beta */
+.theme-toggle {
+  margin-left: auto;
+}
+
+#theme-toggle-btn {
+  border: 1px solid #4b5563;
+  background: transparent;
+  color: #f9fafb;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+#theme-toggle-btn:hover {
+  background: #374151;
+}
+
+/* Dark theme */
+body.dark {
+  background: #020617;
+  color: #e5e7eb;
+}
+
+body.dark .top-bar {
+  background: #020617;
+}
+
+body.dark .tool-box {
+  background: #020617;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.8);
+}
+
+body.dark .tool-panel p,
+body.dark .hero-subtitle {
+  color: #cbd5f5;
+}
+
+body.dark .ad-box {
+  background: #020617;
+  border-color: #4b5563;
+}
+
+body.dark .ad-label {
+  background: #111827;
+  color: #9ca3af;
+}
+
+body.dark .footer {
+  color: #6b7280;
+}
+
+body.dark .upload-area {
+  background: #020617;
+  border-color: #4b5563;
+  color: #e5e7eb;
+}
+
+body.dark .result-area {
+  color: #e5e7eb;
+}
+
+body.dark .tool-card {
+  background: #020617;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.8);
+}
