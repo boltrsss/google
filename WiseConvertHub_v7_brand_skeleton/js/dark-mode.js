@@ -1,0 +1,2 @@
+
+document.addEventListener('DOMContentLoaded',()=>{const btn=document.getElementById('theme-toggle-btn');if(!btn)return;let mode=localStorage.getItem('wise-theme')||'light';if(mode==='dark'){document.body.classList.add('dark');btn.textContent='☀️';}else{btn.textContent='🌙';}btn.addEventListener('click',()=>{const isDark=document.body.classList.toggle('dark');localStorage.setItem('wise-theme',isDark?'dark':'light');btn.textContent=isDark?'☀️':'🌙';});});
